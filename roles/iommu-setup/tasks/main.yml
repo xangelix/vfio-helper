@@ -32,3 +32,19 @@
 - name: Check for IOMMU support for Intel
   when: cpu_vendor.stdout == "INTEL"
   shell: "dmesg | grep 'Virtualization Technology for Directed I/O'"
+
+- name: Look for attached VGA
+  shell: "lspci -knn | grep VGA"
+  register: lspci_knn_vga
+
+- name: Print lspci output
+  debug:
+    msg: "{{ lspci_knn_vga.stdout }}"
+
+- name: Parse lscpi output
+  shell: "python3 {{ role_path }}/files/lspci-parser.py '{{ lspci_knn_vga.stdout }}'"
+  register: vga_main_buses
+
+- name: Print main vga buses
+  debug:
+    msg: "{{ vga_main_buses.stdout_lines }}"
