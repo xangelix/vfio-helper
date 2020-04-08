@@ -1,2 +1,19 @@
 ---
 # tasks file for iommu-setup
+
+- name: Install util-linux
+  pacman:
+    name: util-linux
+
+- name: Install pciutils
+  pacman:
+    name: pciutils
+
+- name: Install grep
+  pacman:
+    name: grep
+
+- name: Install python3
+  pacman:
+    name: python3
+
