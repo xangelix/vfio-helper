@@ -1,0 +1,7 @@
+---
+- name: "Attempting VFIO VGA passthrough..."
+  hosts: localhost
+  become: true
+
+  roles:
+    - iommu-setup
