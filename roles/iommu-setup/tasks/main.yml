@@ -1,5 +1,7 @@
 ---
 # tasks file for iommu-setup
+#TODO:- name: Check architecture
+#TODO:- name: Check distribution
 
 - name: Install util-linux
   pacman:
@@ -48,3 +50,29 @@
 - name: Print main vga buses
   debug:
     msg: "{{ vga_main_buses.stdout_lines }}"
+
+- name: Verify two or more VGA buses    
+  debug:
+    msg: "{{ vga_main_buses.stdout_lines|length }} VGA buses detected"
+  failed_when: vga_main_buses.stdout_lines|length < 2
+
+- name: Find IOMMU groups
+  shell: "find /sys/kernel/iommu_groups/ -type l"
+  register: iommu_groups
+
+- name: Parse IOMMU groups
+  shell: "python3 {{ role_path }}/files/iommu-parser.py '{{ iommu_groups.stdout }}' '{{ lspci_knn_vga.stdout }}' '0e:00.0'"
+  register: vga_iommu_groups
+
+- name: Print VGA IOMMU groups
+  debug:
+    msg: "{{ vga_iommu_groups.stdout_lines }}"
+
+#TODO: Collision detection is flawed
+
+- name: Verify no IOMMU group collision   
+  debug:
+    msg: "{{ vga_iommu_groups.stdout_lines[vga_iommu_groups.stdout_lines|length]  }} no collision detected."
+  failed_when: vga_iommu_groups.stdout_lines[vga_iommu_groups.stdout_lines|length]  == False
+
+#TODO: USB passthrough selection, mouse and keyboard especially
