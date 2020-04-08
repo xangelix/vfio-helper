@@ -24,3 +24,11 @@
 - name: Print CPU vendor
   debug:
     msg: "{{ cpu_vendor.stdout }}"
+
+- name: Check for IOMMU support for AMD
+  when: cpu_vendor.stdout == "AMD"
+  shell: "dmesg | grep 'AMD-Vi'"
+
+- name: Check for IOMMU support for Intel
+  when: cpu_vendor.stdout == "INTEL"
+  shell: "dmesg | grep 'Virtualization Technology for Directed I/O'"
