@@ -17,3 +17,10 @@
   pacman:
     name: python3
 
+- name: Check CPU vendor
+  shell: "python3 {{ role_path }}/files/cpu-vendor-parser.py '{{ ansible_processor[1] }}'"
+  register: cpu_vendor
+
+- name: Print CPU vendor
+  debug:
+    msg: "{{ cpu_vendor.stdout }}"
