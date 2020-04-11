@@ -217,3 +217,8 @@
 #- name: Update initramfs
 #  when: not patched
 #  shell: "mkinitcpio -p linux"
+
+- name: Download virtio-win.iso
+  get_url:
+    url: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/virtio-win.iso
+    dest: /home/cody/Downloads/virtio-win.iso
