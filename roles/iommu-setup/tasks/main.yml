@@ -181,3 +181,15 @@
 - name: Send aliases to vfio_pci.conf
   shell: "echo 'alias {{ item.stdout }} vfio-pci' >> /etc/modprobe.d/vfio_pci_dead.conf"
   loop: "{{ alias.results }}"
+
+# Parse passthrough PCI IDs
+
+- name: Parse passthrough PCI IDs
+  shell: "python3 {{ role_path }}/files/lspci_id_parser.py '{{ iommu_pure.stdout }}' '{{ binded_buses.stdout }}'"
+  register: pci_ids
+
+- name: Print pci-ids
+  debug:
+    msg: "{{ pci_ids.stdout }}"
+
+#TODO: Override if any duplicate IDs
