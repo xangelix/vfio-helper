@@ -156,3 +156,28 @@
 - name: Print passthrough buses
   debug:
     msg: "{{ binded_buses.stdout_lines }}"
+
+- name: Print passthrough buses
+  debug:
+    msg: "{{ item }}"
+  loop: "{{ binded_buses.stdout_lines }}"
+
+# Read passthrough PCI aliases
+
+- name: Print aliases
+  shell: "cat /sys/bus/pci/devices/{{ item }}/modalias"
+  register: alias
+  loop: "{{ binded_buses.stdout_lines }}"
+
+- name: Print alias buses
+  debug:
+    msg: "{{ item.stdout }}"
+  loop: "{{ alias.results }}"
+
+# Append modprobe.d with aliases to vfio-pci
+
+#TODO: Make file location variables
+
+- name: Send aliases to vfio_pci.conf
+  shell: "echo 'alias {{ item.stdout }} vfio-pci' >> /etc/modprobe.d/vfio_pci_dead.conf"
+  loop: "{{ alias.results }}"
