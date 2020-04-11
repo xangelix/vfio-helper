@@ -96,7 +96,14 @@
 
 # Read all PCI buses
 
-- name: Print VGA IOMMU groups
+- name: Look for attached pci
+  shell: "lspci -knn"
+  register: lspci_knn
+
+- name: Print lspci knn output
+  debug:
+    msg: "{{ lspci_knn.stdout }}"
+
 # Bind all PCI buses to their respective IOMMU groups
 
   debug:
