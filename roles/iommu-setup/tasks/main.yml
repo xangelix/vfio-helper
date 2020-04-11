@@ -204,3 +204,16 @@
 
 - name: Send ignore msrs option to kvm.conf
   shell: "echo 'options kvm ignore_msrs=1' >> /etc/modprobe.d/kvm_dead.conf"
+
+# Add modules to mkinitcpio.conf
+
+- name: Add modules to mkinitcpio.conf
+  shell: "sed -i '7s/.*/MODULES=\\(vfio vfio_iommu_type1 vfio_pci vfio_virqfd vhost-net\\)/' /home/cody/Downloads/mkinitcpio.conf"
+
+#- name: Update initramfs
+#  when: patched
+#  shell: "mkinitcpio -p linux-vfio"
+
+#- name: Update initramfs
+#  when: not patched
+#  shell: "mkinitcpio -p linux"
