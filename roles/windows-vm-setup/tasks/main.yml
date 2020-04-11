@@ -1,0 +1,7 @@
+---
+# tasks file for windows-vm-setup
+
+- name: Download virtio-win.iso
+  get_url:
+    url: https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/latest-virtio/virtio-win.iso
+    dest: /home/cody/Downloads/virtio-win.iso
