@@ -134,9 +134,14 @@
 
 # Check for collision between passthrough and host VGA IOMMU groups
 
+- name: Parse passthrough and host IOMMU group collision   
+  shell: "python3 {{ role_path }}/files/passthrough_iommu_collision.py '{{ iommu_coll.stdout }}' '{{ iommu_collb.stdout }}'"
+  register: iommu_collisiona
+
+- name: Print collisionA
   debug:
-    msg: "{{ vga_iommu_groups.stdout_lines[vga_iommu_groups.stdout_lines|length]  }} no collision detected."
-  failed_when: vga_iommu_groups.stdout_lines[vga_iommu_groups.stdout_lines|length]  == False
+    msg: "Collision is {{ iommu_collisiona.stdout_lines[0] }}"
+  failed_when: iommu_collisiona.stdout_lines[0] == "True"
 
 # Read USB devices
 
