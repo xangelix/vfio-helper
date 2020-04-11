@@ -106,8 +106,13 @@
 
 # Bind all PCI buses to their respective IOMMU groups
 
+- name: Parse lscpi to bind IOMMU groups
+  shell: "python3 {{ role_path }}/files/iommu_parser.py '{{ lspci_knn.stdout }}' '{{ iommu_groups.stdout }}'"
+  register: iommu_pure
+
+- name: Print binded buses
   debug:
-    msg: "{{ vga_iommu_groups.stdout_lines }}"
+    msg: "{{ iommu_pure.stdout_lines }}"
 
 # Look for all IOMMU groups for each VGA bus
 
