@@ -116,7 +116,22 @@
 
 # Look for all IOMMU groups for each VGA bus
 
-- name: Verify no IOMMU group collision   
+- name: Parse passthrough IOMMU groups
+  shell: "python3 {{ role_path }}/files/passthrough-iommu-parser.py '{{ iommu_pure.stdout }}' '{{ vga_main_buses.stdout_lines[vga_bus_passthrough.user_input|int] }}'"
+  register: iommu_coll
+
+- name: Print passthrough IOMMU groups
+  debug:
+    msg: "{{ iommu_coll.stdout_lines }}"
+
+- name: Parse host IOMMU groups
+  shell: "python3 {{ role_path }}/files/passthrough-iommu-parser.py '{{ iommu_pure.stdout }}' '{{ vga_main_buses.stdout_lines[vga_bus_host.user_input|int] }}'"
+  register: iommu_collb
+
+- name: Print host IOMMU groups
+  debug:
+    msg: "{{ iommu_collb.stdout_lines }}"
+
 # Check for collision between passthrough and host VGA IOMMU groups
 
   debug:
