@@ -35,6 +35,8 @@
   when: cpu_vendor.stdout == "INTEL"
   shell: "dmesg | grep 'Virtualization Technology for Directed I/O'"
 
+#TODO: On fail add to grub, prompt or bios SVM/iommu enable
+
 - name: Look for attached VGA
   shell: "lspci -knn | grep VGA"
   register: lspci_knn_vga
@@ -55,6 +57,24 @@
   debug:
     msg: "{{ vga_main_buses.stdout_lines|length }} VGA buses detected"
   failed_when: vga_main_buses.stdout_lines|length < 2
+
+- pause:
+    prompt: "Please select a passthrough vga bus"
+  register: vga_bus_passthrough
+
+- name: Print main vga IDs SXX
+  debug:
+    msg: "{{ vga_main_buses.stdout_lines[vga_bus_passthrough.user_input|int] }}"
+
+#TODO: loop set remaining to host
+
+- pause:
+    prompt: "Please select a host vga bus"
+  register: vga_bus_host
+
+- name: Print main vga IDs SXX
+  debug:
+    msg: "{{ vga_main_buses.stdout_lines[vga_bus_host.user_input|int] }}"
 
 - name: Find IOMMU groups
   shell: "find /sys/kernel/iommu_groups/ -type l"
