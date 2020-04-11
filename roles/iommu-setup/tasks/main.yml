@@ -148,3 +148,11 @@
 #TODO: USB passthrough selection, mouse and keyboard especially
 
 # Parse all VGA passthrough buses
+
+- name: Parse passthrough buses
+  shell: "python3 {{ role_path }}/files/binded_buses.py '{{ iommu_pure.stdout }}' '{{ vga_main_buses.stdout_lines[vga_bus_passthrough.user_input|int] }}'"
+  register: binded_buses
+
+- name: Print passthrough buses
+  debug:
+    msg: "{{ binded_buses.stdout_lines }}"
