@@ -90,9 +90,10 @@
   shell: "find /sys/kernel/iommu_groups/ -type l"
   register: iommu_groups
 
-- name: Parse IOMMU groups
-  shell: "python3 {{ role_path }}/files/iommu-parser.py '{{ iommu_groups.stdout }}' '{{ lspci_knn_vga.stdout }}' '0e:00.0'"
-  register: vga_iommu_groups
+- name: Print iommu output
+  debug:
+    msg: "{{ iommu_groups.stdout }}"
+
 # Read all PCI buses
 
 - name: Print VGA IOMMU groups
