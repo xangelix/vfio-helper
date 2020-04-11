@@ -3,7 +3,7 @@
 #TODO:- name: Check architecture
 #TODO:- name: Check distribution
 
-- name: Install util-linux
+# Check dependencies
   pacman:
     name: util-linux
 
@@ -18,6 +18,8 @@
 - name: Install python3
   pacman:
     name: python3
+
+# Check virtualization support
 
 - name: Check CPU vendor
   shell: "python3 {{ role_path }}/files/cpu-vendor-parser.py '{{ ansible_processor[1] }}'"
@@ -37,6 +39,8 @@
 
 #TODO: On fail add to grub, prompt or bios SVM/iommu enable
 
+# Read VGA PCI structure
+
 - name: Look for attached VGA
   shell: "lspci -knn | grep VGA"
   register: lspci_knn_vga
@@ -53,10 +57,14 @@
   debug:
     msg: "{{ vga_main_buses.stdout_lines }}"
 
+# Verify two or more VGA buses
+
 - name: Verify two or more VGA buses    
   debug:
     msg: "{{ vga_main_buses.stdout_lines|length }} VGA buses detected"
   failed_when: vga_main_buses.stdout_lines|length < 2
+
+# Prompt to select passthrough VGA bus by index
 
 - pause:
     prompt: "Please select a passthrough vga bus"
@@ -76,6 +84,8 @@
   debug:
     msg: "{{ vga_main_buses.stdout_lines[vga_bus_host.user_input|int] }}"
 
+# Read IOMMU groups
+
 - name: Find IOMMU groups
   shell: "find /sys/kernel/iommu_groups/ -type l"
   register: iommu_groups
@@ -83,16 +93,25 @@
 - name: Parse IOMMU groups
   shell: "python3 {{ role_path }}/files/iommu-parser.py '{{ iommu_groups.stdout }}' '{{ lspci_knn_vga.stdout }}' '0e:00.0'"
   register: vga_iommu_groups
+# Read all PCI buses
 
 - name: Print VGA IOMMU groups
+# Bind all PCI buses to their respective IOMMU groups
+
   debug:
     msg: "{{ vga_iommu_groups.stdout_lines }}"
 
-#TODO: Collision detection is flawed
+# Look for all IOMMU groups for each VGA bus
 
 - name: Verify no IOMMU group collision   
+# Check for collision between passthrough and host VGA IOMMU groups
+
   debug:
     msg: "{{ vga_iommu_groups.stdout_lines[vga_iommu_groups.stdout_lines|length]  }} no collision detected."
   failed_when: vga_iommu_groups.stdout_lines[vga_iommu_groups.stdout_lines|length]  == False
 
+# Read USB devices
+
 #TODO: USB passthrough selection, mouse and keyboard especially
+
+# Parse all VGA passthrough buses
