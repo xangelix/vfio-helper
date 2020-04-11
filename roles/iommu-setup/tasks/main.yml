@@ -47,7 +47,7 @@
 
 - name: Print lspci output
   debug:
-    msg: "{{ lspci_knn_vga.stdout }}"
+    msg: "{{ lspci_knn_vga.stdout_lines }}"
 
 - name: Parse lscpi output
   shell: "python3 {{ role_path }}/files/lspci-parser.py '{{ lspci_knn_vga.stdout }}'"
